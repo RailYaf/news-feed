@@ -1,0 +1,8 @@
+.wrapper {
+    width: 1519px;
+}
+
+.MuiTabs-flexContainer {
+   display: flex;
+   justify-content: space-around;
+}

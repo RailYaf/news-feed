@@ -1,0 +1,13 @@
+.MuiBox-root-5 {
+  padding: 0px;
+}
+
+.archive {
+  margin-right: 10px;
+}
+
+.MuiListItemText-root {
+  border-bottom: 1px solid;
+  padding-bottom: 5px;
+  width: 500px;
+}
