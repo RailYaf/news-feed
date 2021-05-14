@@ -19,21 +19,21 @@ class News extends Component {
     };
   }
 
-  componentDidUpdate = () => {
+ /*  componentDidMount = () => {
     localStorage.setItem("dataLike", JSON.stringify(this.state.like));
   };
 
-  componentDidMount = () => {
+  componentDidUpdate = () => {
     const dataLike = JSON.parse(localStorage.getItem("dataLike"));
     this.setState({ like: dataLike });
-  };
+  }; */
 
   handleClickDelete = (id) => {
     this.props.deleteNew(id);
   };
 
   getValueFavotites = (id) => {
-    const currentIndex = this.state.like.indexOf(id);
+    const currentIndex = this.state.like?.indexOf(id);
     const newChecked = [...this.state.like];
     if (currentIndex === -1) {
       newChecked.push(id);

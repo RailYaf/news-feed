@@ -9,6 +9,7 @@ import News from "./News/News";
 import Archive from "./Archive/Archive";
 import Favorites from "./Favorites/Favorites";
 import Alert from "./Template/Alert";
+import { changeArchive } from "./utils";
 
 class App extends Component {
   constructor(props) {
@@ -16,8 +17,6 @@ class App extends Component {
     this.state = {
       value: 0,
       content: [],
-      archive: [],
-      favorites: [],
       openDelete: false,
       openArchive: false,
       openRecovery: false,
@@ -30,16 +29,11 @@ class App extends Component {
       .then((res) => res.json())
       .then((data) => {
         this.setState({ content: data });
+        // localStorage.setItem("dataStore", JSON.stringify(this.state.content));
       });
   }
 
-  componentDidUpdate = () => {
-    localStorage.setItem("dataStore", JSON.stringify(this.state.content));
-    localStorage.setItem("dataArchive", JSON.stringify(this.state.archive));
-    localStorage.setItem("dataFavorites", JSON.stringify(this.state.favorites));
-  };
-
-  componentDidMount = () => {
+  /* componentDidMount = () => {
     const dataStore = JSON.parse(localStorage.getItem("dataStore"));
     const dataArchive = JSON.parse(localStorage.getItem("dataArchive"));
     const dataFavorites = JSON.parse(localStorage.getItem("dataFavorites"));
@@ -48,7 +42,7 @@ class App extends Component {
       this.setState({ archive: dataArchive });
       this.setState({ favorites: dataFavorites });
     }
-  };
+  }; */
 
   // Переключение вкладок
   handleChange = (event, newValue) => {
@@ -57,31 +51,18 @@ class App extends Component {
 
   // Удаление новости
   deleteNew = (id) => {
-    let arr = this.state.content;
-    this.setState({
-      content: arr.filter((item) => item.id !== id),
-      openDelete: true, // Всплывающее окно "Новость удалена!"
+    this.setState((state) => {
+      let copy = [...this.state.content];
+      let arr = {
+        ...state,
+        content: copy.filter((item) => item.id !== id),
+      };
+      return {
+        content: arr.content,
+        openDelete: !state.openDelete,
+      };
     });
-  };
-
-  // Перемещение в архив
-  addArchive = (id) => {
-    let arr = this.state.content;
-    let result = arr.find((item) => item.id === id);
-    this.setState({
-      content: arr.filter((item) => item.id !== id),
-      archive: [...this.state.archive, result],
-      openArchive: true, // Всплывающее окно "Новость добавлена в архив!"
-    });
-  };
-
-  // Удаление новости из архива
-  deleteArchive = (id) => {
-    let arr = this.state.archive;
-    this.setState({
-      archive: arr.filter((item) => item.id !== id),
-      openDelete: true, // Всплывающее окно "Новость удалена!"
-    });
+    console.log(this.state.content);
   };
 
   // Восстановление новости из архива
@@ -121,7 +102,7 @@ class App extends Component {
   };
 
   render() {
-    let { content, archive, favorites } = this.state;
+    const { content, archive, favorites } = this.state;
 
     return (
       <div className="wrapper">
@@ -136,20 +117,36 @@ class App extends Component {
           <News
             todo={content}
             deleteNew={this.deleteNew}
-            addFavorites={this.addFavorites}
-            addArchive={this.addArchive}
-            deleteFavorites={this.deleteFavorites}
+            addFavorites={(value) =>
+              this.setState({
+                content: changeArchive(value, content, true, "like"),
+              })
+            }
+            addArchive={(value) =>
+              this.setState({
+                content: changeArchive(value, content, true, "archive"),
+              })
+            }
+            deleteFavorites={(value) =>
+              this.setState({
+                content: changeArchive(value, content, false, "like"),
+              })
+            }
           />
         </TabPanel>
         <TabPanel value={this.state.value} index={1}>
           <Archive
-            archive={archive}
-            deleteArchive={this.deleteArchive}
+            archive={content}
+            deleteArchive={(value) =>
+              this.setState({
+                content: changeArchive(value, content, false, "archive"),
+              })
+            }
             recoveryNews={this.recoveryNews}
           />
         </TabPanel>
         <TabPanel value={this.state.value} index={2}>
-          <Favorites todos={favorites} />
+          <Favorites todos={content} />
         </TabPanel>
         <div>
           <Snackbar

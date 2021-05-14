@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 class Archive extends Component {
+ 
   handleClickDelete = (id) => {
     this.props.deleteArchive(id);
   };
@@ -19,7 +20,7 @@ class Archive extends Component {
     let archive = this.props.archive;
     return (
       <List>
-        {archive.map((item) => {
+        {archive.filter(item => item.archive).map((item) => {
           return (
             <ListItem key={item.id} dense button>
               <ListItemText primary={`${item.body}`} />

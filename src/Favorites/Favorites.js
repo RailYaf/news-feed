@@ -8,7 +8,7 @@ class Favorites extends Component {
     let todos = this.props.todos;
     return (
       <List>
-        {todos.map((item) => {
+        {todos.filter(item => item.like).map((item) => {
           return (
             <ListItem key={item.id} dense button>
               <ListItemText primary={`${item.body}`} />
